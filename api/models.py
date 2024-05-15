@@ -11,7 +11,7 @@ class Person(models.Model):
     email = models.EmailField(unique=True, null=False)
     confirmarEmail = models.EmailField(unique=True)
     telefone = models.CharField(max_length=11, null=False)
-    body = models.TextField()
+    body = models.TextField(blank=True, null=True, default='')
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

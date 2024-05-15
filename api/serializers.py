@@ -5,6 +5,9 @@ class PersonSerializer(ModelSerializer):
     class Meta:
         model = Person
         fields = ['idClient', 'nomeRazao', 'cpfCnpj', 'rg', 'dataNascFund', 'email', 'confirmarEmail', 'telefone', 'body', 'updated', 'created']
+        extra_kwargs = {
+            'body': {'required': False},
+        }
 
 
 class VehicleSerializer(ModelSerializer):
