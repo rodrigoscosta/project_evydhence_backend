@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -32,9 +33,12 @@ def getPersons(request):
 
 @api_view(['GET'])
 def getPerson(request, pk):
-    person = Person.objects.get(idClient=pk)
-    serializer = PersonSerializer(person, many=False)
-    return Response(serializer.data)
+    try:
+        person = Person.objects.get(cpfCnpj=pk)
+        serializer = PersonSerializer(person, many=False)
+        return Response(serializer.data)
+    except Person.DoesNotExist:
+        return Response({"detail": "Cliente não encontrado para o cpfCnpj fornecido."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def createPerson(request):
