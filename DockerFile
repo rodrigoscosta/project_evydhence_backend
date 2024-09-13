@@ -7,9 +7,16 @@ WORKDIR /app
 # 3. Copie os arquivos do projeto para o container
 COPY . /app
 
+ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mysql"
+ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/mysql"
+
 # 4. Instale as dependências do sistema necessárias para o mysqlclient
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev build-essential
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    libmariadb-dev-compat \
+    libmariadb-dev
 
 # 5. Instale as dependências do projeto
 RUN pip install --upgrade pip
