@@ -1,0 +1,25 @@
+# 1. Use uma imagem base oficial do Python
+FROM python:3.12-slim
+
+# 2. Defina a pasta de trabalho no container
+WORKDIR /app
+
+# 3. Copie os arquivos do projeto para o container
+COPY . /app
+
+# 4. Instale as dependências do sistema necessárias para o mysqlclient
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev build-essential
+
+# 5. Instale as dependências do projeto
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# 6. Exponha a porta em que o Django vai rodar
+EXPOSE 8000
+
+# 7. Instalar gunicorn
+RUN pip install gunicorn
+
+# 8. Comando de inicialização em produção com gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
