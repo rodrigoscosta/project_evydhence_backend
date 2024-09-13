@@ -1,32 +1,37 @@
-# 1. Use uma imagem base oficial do Python
+# Use uma imagem base do Python
 FROM python:3.12-slim
 
-# 2. Defina a pasta de trabalho no container
+# Instale as dependências do sistema necessárias para o mysqlclient
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    default-libmysqlclient-dev \
+    libssl-dev \
+    libffi-dev \
+    libmariadb-dev-compat \
+    libmariadb-dev \
+    pkg-config
+
+# Defina o diretório de trabalho
 WORKDIR /app
 
-# 3. Copie os arquivos do projeto para o container
-COPY . /app
+# Copie o arquivo de requisitos para instalar as dependências do projeto
+COPY requirements.txt .
 
+# Instale as dependências do Python
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copie o código da aplicação para o contêiner
+COPY . .
+
+# Defina variáveis de ambiente, se necessário
 ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mysql"
 ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/mysql"
 
-# 4. Instale as dependências do sistema necessárias para o mysqlclient
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    build-essential \
-    pkg-config \
-    libmariadb-dev-compat \
-    libmariadb-dev
+# Execute os comandos de migração do Django
+RUN python manage.py migrate
 
-# 5. Instale as dependências do projeto
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
-# 6. Exponha a porta em que o Django vai rodar
+# Exponha a porta que o Django usará
 EXPOSE 8000
 
-# 7. Instalar gunicorn
-RUN pip install gunicorn
-
-# 8. Comando de inicialização em produção com gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
+# Comando para iniciar o servidor do Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
