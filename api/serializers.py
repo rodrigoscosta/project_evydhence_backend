@@ -1,13 +1,22 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Person, Vehicle
+from rest_framework import serializers
 
 class PersonSerializer(ModelSerializer):
+    # Sobrescrevendo o campo dataNascFund para aceitar o formato DD/MM/YYYY
+    dataNascFund = serializers.DateField(format='%Y-%m-%d', input_formats=['%d/%m/%Y'])
+
     class Meta:
         model = Person
         fields = ['idClient', 'nomeRazao', 'cpfCnpj', 'rg', 'dataNascFund', 'email', 'confirmarEmail', 'telefone', 'body', 'updated', 'created']
         extra_kwargs = {
             'body': {'required': False},
         }
+
+    def validate_dataNascFund(self, value):
+        if not value:
+            raise serializers.ValidationError("O campo dataNascFund não pode ser vazio.")
+        return value
 
 
 class VehicleSerializer(ModelSerializer):
