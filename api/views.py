@@ -43,6 +43,7 @@ def getPerson(request, pk):
 @api_view(['POST'])
 def createPerson(request):
     data = request.data
+    #verificar posteriormente
     #data['dataNascFund'] = formatar_data(data.get('dataNascFund')) 
 
     serializer = PersonSerializer(data=data)
