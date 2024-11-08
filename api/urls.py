@@ -12,5 +12,10 @@ urlpatterns = [
     path('vehicles/<int:pk>/', views.getVehiclesByClient),
     path('vehicles/create/', views.createVehicle),
     path('vehicles/<int:pk>/update/', views.updateVehicle),
-    path('vehicles/<int:pk>/delete/', views.deleteVehicle)
+    path('vehicles/<int:pk>/delete/', views.deleteVehicle),
+    path('schedules/', views.getSchedules),
+    path('schedules/<int:pk>/', views.getSchedulesByVehicle),
+    path('schedules/create/', views.createSchedule),
+    path('schedules/<int:pk>/update/', views.updateSchedule),
+    path('schedules/<int:pk>/delete/', views.deleteSchedule)
 ]

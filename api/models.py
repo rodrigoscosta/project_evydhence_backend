@@ -39,3 +39,19 @@ class Vehicle(models.Model):
     
     class Meta:
         ordering = ['-updated']
+
+class Schedule(models.Model):
+    idSchedule = models.AutoField(primary_key=True, unique=True, null=False)
+    idVeiculo = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    dtaAgendamento = models.DateField(null=False)
+    horaAgendamento = models.CharField(max_length=6, null=False, default="00:00")
+    localAgendamento = models.CharField(max_length=100, null=False, default="")
+    observacao = models.CharField(max_length=100, null=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.observacao
+    
+    class Meta:
+        ordering = ['-updated']

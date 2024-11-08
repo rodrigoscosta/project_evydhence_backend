@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Person, Vehicle
+from .models import Person, Vehicle, Schedule
 from rest_framework import serializers
 
 class PersonSerializer(ModelSerializer):
@@ -23,3 +23,8 @@ class VehicleSerializer(ModelSerializer):
     class Meta:
         model = Vehicle
         fields = ['idVeiculo', 'idCliente', 'placa', 'marca', 'modelo', 'tipoVeiculo', 'anoFabricacao', 'anoModelo', 'updated', 'created']
+
+class ScheduleSerializer(ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = ['idSchedule', 'idVeiculo', 'dtaAgendamento', 'horaAgendamento', 'localAgendamento', 'observacao', 'updated', 'created']

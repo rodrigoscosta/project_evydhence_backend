@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from api.utils import formatar_data
-from .serializers import PersonSerializer, VehicleSerializer
-from .models import Person, Vehicle
+from .serializers import PersonSerializer, VehicleSerializer, ScheduleSerializer
+from .models import Person, Vehicle, Schedule
 
 # Create your views here.
 
@@ -21,7 +21,12 @@ def getRoute(request):
             'GetVehiclesByClient': '/vehicles/<int:pk>/',
             'Create Vehicle': '/vehicles/create',
             'Update Vehicle': '/vehicles/<int:pk>/update/',
-            'Delete Vehicle': '/vehicles/<int:pk>/delete/'
+            'Delete Vehicle': '/vehicles/<int:pk>/delete/',
+            'GetSchedules': '/schedules/',
+            'GetSchedulesByVehicle': '/schedules/<int:pk>/',
+            'Create Schedules': '/schedules/create',
+            'Update Schedules': '/schedules/<int:pk>/update/',
+            'Delete Schedules': '/schedules/<int:pk>/delete/'
         }
     return Response(route)
 
@@ -61,7 +66,12 @@ def updatePerson(request, pk):
         return Response({"error": "Cliente não encontrado"}, status=404)
     
     data = request.data
-    data['dataNascFund'] = formatar_data(data.get('dataNascFund'))  # Formata a data de nascimento
+    #verificar posteriormente
+    #data['dataNascFund'] = formatar_data(data.get('dataNascFund'))  # Formata a data de nascimento
+
+    # Remover a propriedade 'created' dos dados enviados, se estiver presente
+    if 'created' in data:
+        data.pop('created')
 
     serializer = PersonSerializer(person, data=data)
 
@@ -125,6 +135,10 @@ def updateVehicle(request, pk):
     
     data = request.data
 
+    # Remover a propriedade 'created' dos dados enviados, se estiver presente
+    if 'created' in data:
+        data.pop('created')
+
     serializer = VehicleSerializer(vehicle, data=data)
 
     if serializer.is_valid():
@@ -139,3 +153,73 @@ def deleteVehicle(request, pk):
     vehicle.delete()
 
     return Response('Veículo excluído!')
+
+
+@api_view(['GET'])
+def getSchedules(request):
+    schedules = Schedule.objects.all()
+    serializer = ScheduleSerializer(schedules, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getSchedulesByVehicle(request, pk):
+    schedule = Schedule.objects.filter(idVeiculo=pk)
+    serializer = ScheduleSerializer(schedule, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def createSchedule(request):
+    data = request.data
+
+    data['dtaAgendamento'] = formatar_data(data.get('dtaAgendamento'))
+
+    # Obtém o objeto Vehicle correspondente ao ID fornecido
+    idVeiculo = data.get('idVeiculo')
+    if idVeiculo:
+        try:
+            veiculo = Vehicle.objects.get(pk=idVeiculo)
+        except Person.DoesNotExist:
+            return Response({"message": "Vehicle with ID {} does not exist".format(idVeiculo)}, status=400)
+    else:
+        return Response({"message": "idVeiculo is required"}, status=400)
+
+    schedule = Schedule.objects.create(
+        idVeiculo = veiculo,
+        dtaAgendamento = data['dtaAgendamento'],
+        horaAgendamento = data['horaAgendamento'],
+        localAgendamento = data['localAgendamento'],
+        observacao = data['observacao'],
+    )
+    serializer = ScheduleSerializer(schedule, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def updateSchedule(request, pk):
+    try:
+        schedule = Schedule.objects.get(idSchedule=pk)
+    except Schedule.DoesNotExist:
+        return Response({"error": "Agendamento não encontrado"}, status=404)
+
+    data = request.data
+
+    # Formatar a data do agendamento
+    data['dtaAgendamento'] = formatar_data(data.get('dtaAgendamento'))
+
+    # Remover a propriedade 'created' dos dados enviados, se estiver presente
+    if 'created' in data:
+        data.pop('created')
+
+    serializer = ScheduleSerializer(schedule, data=data, partial=True)  # partial=True permite a atualização parcial
+
+    if serializer.is_valid():
+        updated_schedule = serializer.save()
+        return Response({"message": "Agendamento atualizado com sucesso", "data": serializer.data})
+    else:
+        return Response(serializer.errors, status=400)
+
+@api_view(['DELETE'])
+def deleteSchedule(request, pk):
+    schedule = Schedule.objects.get(idSchedule=pk)
+    schedule.delete()
+
+    return Response('Agendamento excluído!')
