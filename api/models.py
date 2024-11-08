@@ -40,6 +40,7 @@ class Vehicle(models.Model):
     class Meta:
         ordering = ['-updated']
 
+#Model dos agendamentos
 class Schedule(models.Model):
     idSchedule = models.AutoField(primary_key=True, unique=True, null=False)
     idVeiculo = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
