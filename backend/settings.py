@@ -95,31 +95,31 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('MYSQLDATABASE'),
-        'USER': config('MYSQLUSER'),
-        'PASSWORD': config('MYSQLPASSWORD'),
-        'HOST': config('MYSQLHOST'),
-        'PORT': config('MYSQLPORT', default='3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'evydhencedb',
-#         'USER': 'root',
-#         'PASSWORD': 'admin',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
+#         'NAME': config('MYSQLDATABASE'),
+#         'USER': config('MYSQLUSER'),
+#         'PASSWORD': config('MYSQLPASSWORD'),
+#         'HOST': config('MYSQLHOST'),
+#         'PORT': config('MYSQLPORT', default='3306'),
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#             'charset': 'utf8mb4',
+#         },
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'evydhencedb',
+        'USER': 'root',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
 
 
 # Password validation

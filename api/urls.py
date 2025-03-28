@@ -8,6 +8,7 @@ urlpatterns = [
     path('persons/<int:pk>/update/', views.updatePerson),
     path('persons/<int:pk>/delete/', views.deletePerson),
     path('persons/<int:pk>/', views.getPerson),
+    path('persons/id/<int:pk>/', views.getPersonById),
     path('vehicles/', views.getVehicles),
     path('vehicles/<int:pk>/', views.getVehiclesByClient),
     path('vehicles/create/', views.createVehicle),

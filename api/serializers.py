@@ -8,9 +8,10 @@ class PersonSerializer(ModelSerializer):
 
     class Meta:
         model = Person
-        fields = ['idClient', 'nomeRazao', 'cpfCnpj', 'rg', 'dataNascFund', 'email', 'confirmarEmail', 'telefone', 'body', 'updated', 'created']
+        fields = ['idClient', 'nomeRazao', 'cpfCnpj', 'rg', 'dataNascFund', 'sexo', 'email', 'confirmarEmail', 'telefone','cep', 'logradouro', 'numeroResidencia', 'complemento', 'bairro', 'cidade', 'estado', 'uf', 'body', 'updated', 'created']
         extra_kwargs = {
             'body': {'required': False},
+            'complemento': {'required': False}
         }
 
     def validate_dataNascFund(self, value):

@@ -44,6 +44,15 @@ def getPerson(request, pk):
         return Response(serializer.data)
     except Person.DoesNotExist:
         return Response({"detail": "Cliente não encontrado para o cpfCnpj fornecido."}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+def getPersonById(request, pk):
+    try:
+        person = Person.objects.get(idClient=pk)
+        serializer = PersonSerializer(person, many=False)
+        return Response(serializer.data)
+    except Person.DoesNotExist:
+        return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def createPerson(request):
