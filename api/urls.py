@@ -18,5 +18,7 @@ urlpatterns = [
     path('schedules/<int:pk>/', views.getSchedulesByVehicle),
     path('schedules/create/', views.createSchedule),
     path('schedules/<int:pk>/update/', views.updateSchedule),
-    path('schedules/<int:pk>/delete/', views.deleteSchedule)
+    path('schedules/<int:pk>/delete/', views.deleteSchedule),
+    path('persons/total/', views.totalClients),
+    path('persons/total/gender/', views.totalClientsByGender),
 ]

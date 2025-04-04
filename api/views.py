@@ -2,6 +2,7 @@ from django.http import Http404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Count
 
 from api.utils import formatar_data
 from .serializers import PersonSerializer, VehicleSerializer, ScheduleSerializer
@@ -232,3 +233,17 @@ def deleteSchedule(request, pk):
     schedule.delete()
 
     return Response('Agendamento excluído!')
+
+@api_view(['GET'])
+def totalClients(request):
+    total = Person.objects.count() 
+    return Response({"qtdClientes": total})
+
+@api_view(['GET'])
+def totalClientsByGender(request):
+    clientes_por_sexo = Person.objects.values('sexo').annotate(total=Count('idClient'))
+
+    # Ajustando o formato de saída para o frontend
+    resultado = [{'sexo': cliente['sexo'], 'qtdClientes': cliente['total']} for cliente in clientes_por_sexo]
+
+    return Response(resultado)
