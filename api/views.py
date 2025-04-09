@@ -221,7 +221,7 @@ def updateSchedule(request, pk):
     if 'created' in data:
         data.pop('created')
 
-    serializer = ScheduleSerializer(schedule, data=data, partial=True)  # partial=True permite a atualização parcial
+    serializer = ScheduleSerializer(schedule, data=data, partial=True)
 
     if serializer.is_valid():
         updated_schedule = serializer.save()

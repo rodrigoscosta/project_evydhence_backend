@@ -56,7 +56,7 @@ class Schedule(models.Model):
     dtaAgendamento = models.DateField(null=False)
     horaAgendamento = models.CharField(max_length=6, null=False, default="00:00")
     localAgendamento = models.CharField(max_length=100, null=False, default="")
-    observacao = models.CharField(max_length=100, null=False)
+    observacao = models.CharField(max_length=100, null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
