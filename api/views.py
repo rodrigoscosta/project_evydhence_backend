@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from datetime import date
 
 from api.utils import formatar_data
 from .serializers import PersonSerializer, VehicleSerializer, ScheduleSerializer
@@ -245,5 +247,35 @@ def totalClientsByGender(request):
 
     # Ajustando o formato de saída para o frontend
     resultado = [{'sexo': cliente['sexo'], 'qtdClientes': cliente['total']} for cliente in clientes_por_sexo]
+
+    return Response(resultado)
+
+
+@api_view(['GET'])
+def totalSchedulesByMonths(request):
+    today = date.today()
+
+    # Filtra apenas as vistorias já realizadas e agrupa por mês
+    vistoria_por_mes = (
+        Schedule.objects
+        .filter(dtaAgendamento__lte=today)
+        .annotate(mes=TruncMonth('dtaAgendamento'))
+        .values('mes')
+        .annotate(total=Count('idSchedule'))
+        .order_by('mes')
+    )
+
+    # Nomes dos meses em português
+    meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+    # Formata a saída
+    resultado = [
+        {
+            'mes': f"{meses_pt[registro['mes'].month - 1]}/{registro['mes'].year}",
+            'qtdVistorias': registro['total']
+        }
+        for registro in vistoria_por_mes
+    ]
 
     return Response(resultado)

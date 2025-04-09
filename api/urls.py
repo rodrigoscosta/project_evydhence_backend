@@ -21,4 +21,5 @@ urlpatterns = [
     path('schedules/<int:pk>/delete/', views.deleteSchedule),
     path('persons/total/', views.totalClients),
     path('persons/total/gender/', views.totalClientsByGender),
+    path('schedules/total/months/', views.totalSchedulesByMonths),
 ]
