@@ -29,7 +29,11 @@ def getRoute(request):
             'GetSchedulesByVehicle': '/schedules/<int:pk>/',
             'Create Schedules': '/schedules/create',
             'Update Schedules': '/schedules/<int:pk>/update/',
-            'Delete Schedules': '/schedules/<int:pk>/delete/'
+            'Delete Schedules': '/schedules/<int:pk>/delete/',
+            'Total Clients': '/persons/total/',
+            'Total Clients By Gender': '/persons/total/gender/',
+            'Total Schedules By Months': '/schedules/total/months/',
+            'Total Vehicles': '/vehicles/total/',
         }
     return Response(route)
 
@@ -265,7 +269,6 @@ def totalSchedulesByMonths(request):
         .order_by('mes')
     )
 
-    # Nomes dos meses em português
     meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
@@ -279,3 +282,8 @@ def totalSchedulesByMonths(request):
     ]
 
     return Response(resultado)
+
+@api_view(['GET'])
+def totalVehicles(request):
+    total = Vehicle.objects.count() 
+    return Response({"qtdVeiculos": total})
