@@ -257,12 +257,21 @@ def totalClientsByGender(request):
 
 @api_view(['GET'])
 def totalSchedulesByMonths(request):
-    today = date.today()
+    # Pega o parâmetro 'ano' da URL, se não vier nada, usa o ano atual
+    ano_param = request.query_params.get('ano')
+    try:
+        ano = int(ano_param) if ano_param else date.today().year
+    except ValueError:
+        return Response({'error': 'Ano inválido.'}, status=400)
 
-    # Filtra apenas as vistorias já realizadas e agrupa por mês
+    # Define o primeiro e último dia do ano selecionado
+    start_date = date(ano, 1, 1)
+    end_date = date(ano, 12, 31)
+
+    # Filtra apenas as vistorias realizadas dentro do ano selecionado
     vistoria_por_mes = (
         Schedule.objects
-        .filter(dtaAgendamento__lte=today)
+        .filter(dtaAgendamento__range=(start_date, end_date))
         .annotate(mes=TruncMonth('dtaAgendamento'))
         .values('mes')
         .annotate(total=Count('idSchedule'))
@@ -272,7 +281,6 @@ def totalSchedulesByMonths(request):
     meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
                 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
-    # Formata a saída
     resultado = [
         {
             'mes': f"{meses_pt[registro['mes'].month - 1]}/{registro['mes'].year}",
