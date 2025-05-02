@@ -23,5 +23,5 @@ urlpatterns = [
     path('persons/total/gender/', views.totalClientsByGender),
     path('schedules/total/months/', views.totalSchedulesByMonths),
     path('vehicles/total/', views.totalVehicles),
-
+    path('schedules/next/', views.getNextSchedules),
 ]

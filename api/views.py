@@ -5,6 +5,7 @@ from rest_framework import status
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from datetime import date
+from django.utils import timezone
 
 from api.utils import formatar_data
 from .serializers import PersonSerializer, VehicleSerializer, ScheduleSerializer
@@ -295,3 +296,31 @@ def totalSchedulesByMonths(request):
 def totalVehicles(request):
     total = Vehicle.objects.count() 
     return Response({"qtdVeiculos": total})
+
+@api_view(['GET'])
+def getNextSchedules(request):
+    hoje = timezone.now()
+
+    vistorias = (
+        Schedule.objects
+        .filter(dtaAgendamento__gte=hoje)
+        .values(
+            'idVeiculo__idCliente__nomeRazao',
+            'dtaAgendamento',
+            'horaAgendamento',
+            'localAgendamento'
+        )
+        .order_by('dtaAgendamento')
+    )
+
+    resultado = [
+        {
+            'cliente': vistoria['idVeiculo__idCliente__nomeRazao'],
+            'data': vistoria['dtaAgendamento'],
+            'hora': vistoria['horaAgendamento'],
+            'local': vistoria['localAgendamento']
+        }
+        for vistoria in vistorias
+    ]
+
+    return Response(resultado)
